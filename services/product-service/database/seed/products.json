@@ -1,0 +1,62 @@
+[
+    {
+        "id": "a87ee8fc-c6be-4b9c-9b9f-27a1d4ef1f8b",
+        "description": "Random Description 1",
+        "price": 20,
+        "title": "Random Product 1"
+    },
+    {
+        "id": "f7a0810f-1536-47bb-b3e3-5259a1f9f91e",
+        "description": "Random Description 2",
+        "price": 30,
+        "title": "Random Product 2"
+    },
+    {
+        "id": "e4b638cf-652b-4eb3-9a49-9b55a837ed55",
+        "description": "Random Description 3",
+        "price": 25,
+        "title": "Random Product 3"
+    },
+    {
+        "id": "5b3f51be-0f14-4e34-af61-0ff7306e6c8d",
+        "description": "Random Description 4",
+        "price": 15,
+        "title": "Random Product 4"
+    },
+    {
+        "id": "2a42dbb3-88f1-40f6-8a1d-df1d62d31b8c",
+        "description": "Random Description 5",
+        "price": 40,
+        "title": "Random Product 5"
+    },
+    {
+        "id": "e44e3e7b-2a8b-4289-9221-2a9f08e50c5b",
+        "description": "Random Description 6",
+        "price": 35,
+        "title": "Random Product 6"
+    },
+    {
+        "id": "eb093db7-7481-4ad7-9b1b-f6b53be7cc0e",
+        "description": "Random Description 7",
+        "price": 10,
+        "title": "Random Product 7"
+    },
+    {
+        "id": "be1b37d3-08fc-45a3-9e6a-aebe7d0f33e4",
+        "description": "Random Description 8",
+        "price": 50,
+        "title": "Random Product 8"
+    },
+    {
+        "id": "6a9a3572-56a1-4f52-8b79-6e08189e8c7d",
+        "description": "Random Description 9",
+        "price": 45,
+        "title": "Random Product 9"
+    },
+    {
+        "id": "f193ca9f-03de-4cf3-8e56-55c789f86b29",
+        "description": "Random Description 10",
+        "price": 18,
+        "title": "Random Product 10"
+    }
+]
