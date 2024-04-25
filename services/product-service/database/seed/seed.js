@@ -1,31 +1,31 @@
-import AWS from "aws-sdk";
-import { PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
-import products from "./seedData/products.json";
-import stocks from "./seedData/stocks.json";
+import products from './products.json';
+import stocks from './stocks.json';
 
-const dynamodbClient = new AWS.DynamoDB.DocumentClient({
-    region: process.env.AWS_REGION,
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
-  });
+const dynamodbClient = new DynamoDBClient({
+    region: 'us-east-1'
+});
+const docClient = DynamoDBDocumentClient.from(dynamodbClient);
 
-  async function seedTable(tableName, items) {
-    try {
-        for (const item of items) {
-            const params = {
-                TableName: tableName,
-                Item: item,
-            };
+async function seedTable(items, tableName) {
+    for (const item of items) {
 
-            await dynamodbClient.send(new PutItemCommand(params));
-            console.log(`Item seeded successfully.`);
+        const command = new PutCommand({
+            TableName: tableName,
+            Item: item,
+        });
+
+        try {
+            await docClient.send(command);
+            console.log(`${tableName} table filled with new item`);
+        } catch (e) {
+            console.log(`Error while adding item to the ${tableName} table`);
+            console.log(e)
         }
-    } catch (error) {
-        console.error('Error seeding table:', error);
     }
 }
-
 
 seedTable(products, 'products');
 seedTable(stocks, 'stocks');

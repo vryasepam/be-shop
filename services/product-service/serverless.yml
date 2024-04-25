@@ -4,7 +4,8 @@ frameworkVersion: "3"
 plugins:
   - serverless-webpack
   - serverless-auto-swagger
-  - serverless-dynamodb
+  - serverless-offline
+  - serverless-offline-watcher
 
 provider:
   name: aws
@@ -19,9 +20,11 @@ custom:
     apiType: http
     typefiles: []
     basePath: /dev
+  serverless-offline-watcher:
+    - path: /**/*
 
 functions:
- createProduct:
+  createProduct:
     role: DynamoDBAccessRole
     handler: handlers/createProduct.handler
     events:
@@ -55,7 +58,7 @@ resources:
     products:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.products}
+        TableName: products
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
@@ -69,7 +72,7 @@ resources:
     stocks:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.stocks}
+        TableName: stocks
         AttributeDefinitions:
           - AttributeName: productId
             AttributeType: S

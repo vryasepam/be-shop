@@ -1,12 +1,11 @@
-import AWS from "aws-sdk";
-import { TransactGetItemsCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBClient, TransactGetItemsCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 
-const dynamodbClient = new AWS.DynamoDB.DocumentClient({
-  region: process.env.AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY,
-  secretAccessKey: process.env.AWS_SECRET_KEY,
+const dynamodbClient = new DynamoDBClient({
+  region: 'us-east-1'
 });
+const docClient = DynamoDBDocumentClient.from(dynamodbClient);
 
 export const handler = async (event, context, cb) => {
   console.log("getProductsById triggered");
@@ -31,20 +30,21 @@ export const handler = async (event, context, cb) => {
         },
       ],
     });
-    const response = await dynamodbClient.send(command);
+    const response = await docClient.send(command);
     const [product, stock] = response.Responses;
 
     if (!product.Item || !stock.Item) {
       throw new Error('Product is not found with given ID');
     }
 
-    const unmarshalProduct = unmarshall(product.Item)
-    const unmarshalStock = unmarshall(stock.Item)
-
-    const foundProduct = { ...unmarshalProduct, count: unmarshalStock.count }
+    const foundProduct = { ...unmarshall(product.Item), count: unmarshall(stock.Item).count }
 
     return {
       statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
       body: JSON.stringify(foundProduct),
     }
   } catch (error) {

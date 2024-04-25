@@ -1,14 +1,13 @@
-import AWS from "aws-sdk";
-import { TransactWriteItemsCommand } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient, TransactWriteItemsCommand } from "@aws-sdk/client-dynamodb";
 import { marshall } from "@aws-sdk/util-dynamodb";
 
 import { v4 as uuidv4 } from 'uuid';
 
-const dynamodbClient = new AWS.DynamoDB.DocumentClient({
-    region: process.env.AWS_REGION,
-    accessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAccessKey: process.env.AWS_SECRET_KEY,
-});
+const dynamodbClient = new DynamoDBClient({
+    region: 'us-east-1'
+  });
+const docClient = DynamoDBDocumentClient.from(dynamodbClient);
 
 export const handler = async (event, context, cb) => {
     console.log("createProduct triggered");
@@ -53,12 +52,16 @@ export const handler = async (event, context, cb) => {
                 },
             ],
         });
-        await dynamodbClient.send(command);
+        await docClient.send(command);
 
         console.log('Product has been created');
 
         return {
             statusCode: 200,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Credentials': true,
+              },
             body: JSON.stringify(product),
         }
     } catch (error) {
