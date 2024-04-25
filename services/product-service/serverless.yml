@@ -4,6 +4,8 @@ frameworkVersion: "3"
 plugins:
   - serverless-webpack
   - serverless-auto-swagger
+  - serverless-offline
+  - serverless-offline-watcher
 
 provider:
   name: aws
@@ -18,9 +20,20 @@ custom:
     apiType: http
     typefiles: []
     basePath: /dev
+  serverless-offline-watcher:
+    - path: /**/*
 
 functions:
+  createProduct:
+    role: DynamoDBAccessRole
+    handler: handlers/createProduct.handler
+    events:
+      - http:
+          method: post
+          path: products
+          cors: true
   getProductsList:
+    role: DynamoDBAccessRole
     handler: handlers/getProductsList.handler
     events:
       - http:
@@ -28,6 +41,7 @@ functions:
           path: products
           cors: true
   getProductById:
+    role: DynamoDBAccessRole
     handler: handlers/getProductsById.handler
     events:
       - http:
@@ -38,3 +52,56 @@ functions:
             parameters:
               paths:
                 productId: true
+
+resources:
+  Resources:
+    products:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: products
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    stocks:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: stocks
+        AttributeDefinitions:
+          - AttributeName: productId
+            AttributeType: S
+        KeySchema:
+          - AttributeName: productId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+    DynamoDBAccessRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: DynamoDBAccessRole
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: DynamoDBAccess
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - dynamodb:*
+                    - lambda:*
+                  Resource: "*"
