@@ -10,7 +10,7 @@ export const handler = async (event, context, cb) => {
     Key: `uploaded/${name}`,
   };
 
-  const s3Client = new S3Client({ region: 'eu-east-1' });
+  const s3Client = new S3Client({ region: 'us-east-1' });
 
   const signedUrl = await getSignedUrl(s3Client, new PutObjectCommand(params), {
     expiresIn: 60,

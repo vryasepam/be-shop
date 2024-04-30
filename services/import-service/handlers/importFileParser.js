@@ -6,7 +6,7 @@ import {
 } from '@aws-sdk/client-s3';
 import csvParser from 'csv-parser';
 
-const s3Client = new S3Client({ region: 'eu-east-1' });
+const s3Client = new S3Client({ region: 'us-east-1' });
 
 export const handler = async (event, context, cb) => {
     const record = event.Records[0];
