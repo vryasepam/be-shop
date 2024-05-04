@@ -4,7 +4,7 @@ import {
     DeleteObjectCommand,
     S3Client
 } from '@aws-sdk/client-s3';
-import csvParser from 'csv-parser';
+import csv from 'csv-parser';
 
 const s3Client = new S3Client({ region: 'us-east-1' });
 
@@ -35,7 +35,7 @@ export const handler = async (event, context, cb) => {
     });
 
     await new Promise((resolve, reject) => {
-        response.Body.pipe(csvParser())
+        response.Body.pipe(csv())
             .on('data', (data) => {
                 console.info('data: ', data);
             })

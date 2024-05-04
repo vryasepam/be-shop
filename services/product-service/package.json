@@ -3,6 +3,7 @@
     "version": "1.0.0",
     "description": "Product service",
     "scripts": {
+      "dev": "serverless offline start",
       "test": "echo \"Error: no test specified\" && exit 1",
       "data:seed": "babel-node -r dotenv/config database/seed/seed.js"
     },
@@ -19,9 +20,12 @@
       "babel-plugin-transform-runtime": "^6.23.0",
       "babel-polyfill": "^6.23.0",
       "babel-preset-env": "^1.6.0",
+      "dotenv": "^16.4.5",
+      "dotenv-webpack": "^8.1.0",
       "jest": "^29.7.0",
       "serverless": "^3.38.0",
       "serverless-auto-swagger": "^2.12.0",
+      "serverless-dynamodb": "^0.2.53",
       "serverless-offline": "^13.4.0",
       "serverless-offline-watcher": "^1.1.0",
       "serverless-webpack": "^5.3.1",

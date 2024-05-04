@@ -1,11 +1,21 @@
 const path = require("path");
 const nodeExternals = require("webpack-node-externals");
-const slsw = require("serverless-webpack");
+const Dotenv = require('dotenv-webpack');
+const serverless = require('serverless-webpack');
+
+const isLocal = serverless.lib.webpack.isLocal;
+
+console.log('isLocal: ', isLocal);
 
 module.exports = {
-  mode: "development",
-  entry: slsw.lib.entries,
+  mode:  isLocal ? 'development' : 'production',
+  entry: serverless.lib.entries,
   externals: [nodeExternals()],
+  plugins: [
+    new Dotenv({
+      path: isLocal ? './.env.local' : './.env',
+    }),
+  ],
   devtool: "source-map",
   resolve: {
     extensions: [".js", ".json"],

@@ -3,6 +3,7 @@ jspm_packages
 swagger
 
 .env
+.env.local
 .serverless
 .dynamodb
 
