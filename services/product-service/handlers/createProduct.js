@@ -1,13 +1,5 @@
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBClient, TransactWriteItemsCommand } from "@aws-sdk/client-dynamodb";
-import { marshall } from "@aws-sdk/util-dynamodb";
-
 import { v4 as uuidv4 } from 'uuid';
-
-const dynamodbClient = new DynamoDBClient({
-    region: 'us-east-1'
-  });
-const docClient = DynamoDBDocumentClient.from(dynamodbClient);
+import DynamoDB from '@database/dynamoDB.js';
 
 export const handler = async (event, context, cb) => {
     console.log("createProduct triggered");
@@ -28,31 +20,9 @@ export const handler = async (event, context, cb) => {
             count
         }
 
-        const command = new TransactWriteItemsCommand({
-            TransactItems: [
-                {
-                    Put: {
-                        TableName: 'products',
-                        Item: marshall({
-                            id: product.id,
-                            title: product.title,
-                            description: product.description,
-                            price: product.price,
-                        }),
-                    },
-                },
-                {
-                    Put: {
-                        TableName: 'stocks',
-                        Item: marshall({
-                            productId: product.id,
-                            count: product.count,
-                        }),
-                    },
-                },
-            ],
-        });
-        await docClient.send(command);
+        const dynamoDbProvider = new DynamoDB()
+
+        await dynamoDbProvider.createProduct(product)
 
         console.log('Product has been created');
 
@@ -65,6 +35,7 @@ export const handler = async (event, context, cb) => {
             body: JSON.stringify(product),
         }
     } catch (error) {
+        console.log(error);
         return {
             statusCode: 500,
             body: JSON.stringify('Creation of product failed'),

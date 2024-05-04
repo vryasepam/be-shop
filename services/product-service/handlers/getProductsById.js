@@ -1,11 +1,4 @@
-import { DynamoDBClient, TransactGetItemsCommand } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
-import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
-
-const dynamodbClient = new DynamoDBClient({
-  region: 'us-east-1'
-});
-const docClient = DynamoDBDocumentClient.from(dynamodbClient);
+import DynamoDB from '@database/dynamoDB.js';
 
 export const handler = async (event, context, cb) => {
   console.log("getProductsById triggered");
@@ -14,30 +7,9 @@ export const handler = async (event, context, cb) => {
   try {
     const { productId } = event.pathParameters;
 
-    const command = new TransactGetItemsCommand({
-      TransactItems: [
-        {
-          Get: {
-            TableName: 'products',
-            Key: marshall({ id: productId }),
-          },
-        },
-        {
-          Get: {
-            TableName: 'stocks',
-            Key: marshall({ productId }),
-          },
-        },
-      ],
-    });
-    const response = await docClient.send(command);
-    const [product, stock] = response.Responses;
+    const dynamoDbProvider = new DynamoDB()
 
-    if (!product.Item || !stock.Item) {
-      throw new Error('Product is not found with given ID');
-    }
-
-    const foundProduct = { ...unmarshall(product.Item), count: unmarshall(stock.Item).count }
+    const foundProduct = await dynamoDbProvider.getProductById(productId)
 
     return {
       statusCode: 200,
@@ -48,6 +20,7 @@ export const handler = async (event, context, cb) => {
       body: JSON.stringify(foundProduct),
     }
   } catch (error) {
+    console.log(error);
     throw new Error('Product is not found');
   }
 };

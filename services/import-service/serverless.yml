@@ -1,0 +1,56 @@
+service: import-service
+frameworkVersion: "3"
+
+plugins:
+  - serverless-webpack
+  - serverless-auto-swagger
+  - serverless-offline
+  - serverless-offline-watcher
+  - serverless-s3-local
+
+provider:
+  name: aws
+  stage: dev
+  runtime: nodejs18.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource: "arn:aws:s3:::${self:custom.environment.S3_BUCKET_NAME}/*"
+
+custom:
+  environment:
+    S3_BUCKET_NAME: shop-import-bucket
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  autoswagger:
+    apiType: http
+    typefiles: []
+    basePath: /dev
+  serverless-offline-watcher:
+    - path: /**/*
+
+functions:
+  importFileParser:
+    handler: handlers/importFileParser.handler
+    events:
+      - s3:
+          bucket: ${self:custom.environment.S3_BUCKET_NAME}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true
+          forceDeploy: true
+  importProductsFile:
+    handler: handlers/importProductsFile.handler
+    events:
+      - http:
+          path: import
+          method: get
+          request:
+            parameters:
+              querystrings:
+                name: true
+  
