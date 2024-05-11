@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import DynamoDB from '@database/dynamoDB.js';
 
 export const handler = async (event, context, cb) => {
@@ -13,7 +12,6 @@ export const handler = async (event, context, cb) => {
         }
 
         const product = {
-            id: uuidv4(),
             title,
             description,
             price,

@@ -17,11 +17,18 @@ provider:
     - Effect: Allow
       Action:
         - s3:*
-      Resource: "arn:aws:s3:::${self:custom.environment.S3_BUCKET_NAME}/*"
+      Resource: arn:aws:s3:::${self:custom.environment.S3_BUCKET_NAME}/*
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource:
+        Fn::ImportValue: CatalogItemsQueueArn-${sls:stage}
 
 custom:
   environment:
     S3_BUCKET_NAME: shop-import-bucket
+    SQS_QUEUE_NAME:
+      Fn::ImportValue: CatalogItemsQueueName
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true

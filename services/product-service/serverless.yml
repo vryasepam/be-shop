@@ -20,6 +20,10 @@ provider:
       Resource: "*"
 
 custom:
+  environment:
+    SQS_QUEUE_NAME: catalogItemsQueue
+    SNS_TOPIC_NAME: createProductTopic
+    SNS_TOPIC_ARN: !Ref CreateProductTopic
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
@@ -76,6 +80,14 @@ functions:
             parameters:
               paths:
                 productId: true
+  catalogBatchProcess:
+    handler: handlers/catalogBatchProcess.handler
+    events:
+      - sqs:
+          arn: !GetAtt
+            - CatalogItemsQueue
+            - Arn
+          batchSize: 5
 
 resources:
   Resources:
@@ -106,4 +118,40 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+    CatalogItemsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${self:custom.environment.SQS_QUEUE_NAME}
+
+    CreateProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: ${self:custom.environment.SNS_TOPIC_NAME}
+
+    FirstEmailSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: fotis54928@ahieh.com
+        Protocol: email
+        TopicArn: !Ref CreateProductTopic
+        FilterPolicy: '{"totalCount": [{ "numeric": [">", 10] }]}'
+
+    SecondEmailSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: doworod330@nweal.com
+        Protocol: email
+        TopicArn: !Ref CreateProductTopic
+
+  Outputs:
+    CatalogItemsQueueArn:
+      Value: !GetAtt CatalogItemsQueue.Arn
+      Export:
+        Name: CatalogItemsQueueArn-${sls:stage}
+
+    CatalogItemsQueueName:
+      Value: ${self:custom.environment.SQS_QUEUE_NAME}
+      Export:
+        Name: CatalogItemsQueueName
   
