@@ -1,4 +1,3 @@
-import { describe, expect, test } from '@jest/globals';
 import { handler } from '../getProductsById';
 
 const mockId = '7567ec4b-b10c-48c5-9345-fc73c48a80ag';

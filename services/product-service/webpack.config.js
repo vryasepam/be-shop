@@ -21,6 +21,7 @@ module.exports = {
     extensions: ['.js', '.json'],
     alias: {
       '@database': path.resolve(__dirname, './database/'),
+      '@services': path.resolve(__dirname, './services/'),
     },
   },
   output: {
