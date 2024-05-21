@@ -1,0 +1,11 @@
+node_modules
+jspm_packages
+swagger
+
+.env
+.env.local
+.serverless
+.dynamodb
+
+.webpack
+.webpackCache

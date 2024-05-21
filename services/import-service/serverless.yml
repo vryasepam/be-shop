@@ -56,8 +56,26 @@ functions:
       - http:
           path: import
           method: get
+          cors: true
+          authorizer:
+            name: tokenAuthorizer
+            arn:
+              Fn::ImportValue: BasicAuthorizer-${sls:stage}
+            type: token
           request:
             parameters:
               querystrings:
                 name: true
-  
+
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: "AWS::ApiGateway::GatewayResponse"
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: "ApiGatewayRestApi"
